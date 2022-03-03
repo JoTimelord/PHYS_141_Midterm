@@ -1,10 +1,16 @@
 3/1/2022
 First group meeting to discuss initial setup: Yuntong Zhou, Hatim Tapory, Josue Zuniga
 
-3/3/2022
+3/3/2022 "init.c"
 Set up the x,y,z position of points: Yuntong Zhou
 Find out the x,y,z position of the two core masses initially: (they are not in x-y plane)
 Cross-checked by:
 Find out the initial velocity of points:
 Set up the initial velocity of points:
+
+3/6/2022 "evolve.c"
+Adapt the n-body leapfrog to restricted 3-body leapfrog: Yuntong Zhou
+(This largely depends on whose leapfrog is working)
+Cross-checked/debugged by:
+
 

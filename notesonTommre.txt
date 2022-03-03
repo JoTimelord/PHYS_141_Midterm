@@ -1,1 +1,14 @@
-"these [disk] particles in the first three examples were set to orbit one mass point with uniform angular spacing "
+"these [disk] particles in the first three examples were set to orbit one mass point with uniform angular spacing"
+
+
+"For convenience, we shall ... reckon the time t from the peri-galactic instant t=0 in multiples of exactly 10^8 yrs, on the assumption that Rmin=25kpc and that the heavier mass in each encounter equals 10^11 solar mass ... These adopted values mean that the outermost test particles in our first three examples orbit their central mass initially at 15 kpc, with periods of 5.442 time units or 544.2 million years."
+
+Note that we should scale the periods.
+
+
+
+
+
+
+
+
