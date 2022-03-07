@@ -117,8 +117,8 @@ int n;
                 double rij=sqrt(pow(r1[i]-r1[j],2)+pow(r2[i]-r2[j],2); 
                 double aij=-G*m1*m2/(rij*rij);
                 a[i]=a[i]+aij; 
-                ar1[i]=ar1[i]+aij*(ar1[j]-ar1[i])/rij;
-                ar2[i]=ar2[i]+aij*(ar2[j]-ar2[i])/rij;
+                ar1[i]=ar1[i]-aij*(ar1[j]-ar1[i])/rij;
+                ar2[i]=ar2[i]-aij*(ar2[j]-ar2[i])/rij;
             }
         }
     }
