@@ -1,4 +1,4 @@
-/* This the initial setup for the two galaxies in mice project */
+ /* This the initial setup for the two galaxies in mice project */
 
 #include <math.h>
 #include <stdio.h>
@@ -14,6 +14,7 @@ double G=1.0;
 double Rmin=25; /* in kiloparsec */
 
 void angular();
+void particleInitialVel();
 void position();
 void corepos(); 
 void printdat();
@@ -159,6 +160,17 @@ double w2;
         printf("There is something wrong with how I compute (r,theta).\n");
     }
     
+}
+
+void particleInitialVel(rad, vi, n)
+double rad[],vi[]; 
+int n;
+{
+int i; 
+double esoft = 0.2;
+ for (i = 0; i < n; i++)			
+	vi[i] = sqrt(G*M*r[i]/ (pow(r[i],2)+pow(esoft,2)));	
+
 }
 
 /* Give the initial position (x,y,z) of the two core masses at t=-16.4 of the last apocenter */
