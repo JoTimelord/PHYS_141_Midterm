@@ -15,6 +15,8 @@ double Rmin=25; /* in kiloparsec */
 
 void angular();
 void position();
+void corepos(); 
+void printdat();
 
 int main(argc, argv)
 int argc;
@@ -24,17 +26,21 @@ char *argv[];
     /* to keep G as 1, convert M into a new mass unit */
     M=M*4.30091*pow(10,-6);
     
-    /* set up position vectors */
-    int particleN=297*2;  
+    /* set up initial positions */
+    int n,particleN;
     double r[MAXPNT],theta[MAXPNT];
-    double x1,x2; /* find out the initial positions of the core masses */
+    double r1[MAXPNT],r2[MAXPNT]; /* find out the initial positions of the core masses */
+    double x[MAXPNT],y[MAXPNT],z[MAXPNT]; /* the position vector w.r.t. the center of mass of the disk particles */
+    double Rinit,e,rp,w1,w2,i1,i2; /* the Kepler orbits parameters */
+    
+    
+    particleN=297*2;  
 
 
-    angular(r,theta)
+    angular(r,theta);
     double x[MAXPNT],y[MAXPNT],z[MAXPNT];
-    position(x,y,z,particleN,x1,x2);
-    
-    
+    corepos(r1,r2,Rinit,rp,e);
+    position(x,y,z,n,r1,r2,i1,i2,w1,w2);
     
 
 
@@ -59,15 +65,19 @@ double theta[];
 }
 
 
+/* when applying the rotation matrix, we assume that the pericenter axis is the x-axis. */
 
-
-void position(x,y,z,n,x1,x2)
+void position(x,y,z,n,r1,r2,i1,i2,w1,w2)
 double x[];
 double y[];
 double z[];
 int n;
-double x1; /* position of the first core mass */
-double x2;
+double r1[];
+double r2[];
+double i1;
+double i2;
+double w1;
+double w2;
 {
     int ringn=11;
     int innern=12;
@@ -80,9 +90,30 @@ double x2;
     {
         for (int j=0;j<12+3*i;j++)
         {
-            x[count]=r[i]*cos(j*theta[i])+x1;
-            y[count]=r[i]*sin(j*theta[i]);
-            z[count]=0;
+            double rb[3]; /* before rotation, the disk particles are on x-y plane */
+            rb[0]=r[i]*cos(j*theta[i]);
+            rb[1]=r[i]*sin(j*theta[i]);
+            rb[2]=0;
+            /* suppose the axis of intersection is along x-axis */
+            /* first rotate around the x-axis by -i1 */
+
+            double rc[3]; /* after the first rotation */
+            rc[0]=rb[0];
+            rc[1]=rb[1]*cos(-i1)-rb[2]*sin(-i1);
+            rc[2]=rb[1]*sin(-i1)+rb[2]*cos(-i1);
+
+            /* now rotate the disk particles around z-axis by -w1 so that the angle between the pericenter axis and the intersection axis is w1 */
+            double rd[3]; /* after the second rotation */
+            
+            rd[0]=cos(-w1)*rc[0]-sin(-w1)*rc[1];
+            rd[1]=sin(-w1)*rc[0]+cos(-w1)*rc[1];
+            rd[2]=rc[2];
+            
+            /* Now so far it is still with respect to the core mass. Now make connections */
+            x[count]=rd[0]+r1[0];
+            y[count]=rd[1]+r1[1];
+            z[count]=rd[2]+r1[2];
+
             count++;
         }
     }
@@ -92,9 +123,31 @@ double x2;
     {
         for (int j=0;j<12+3*i;j++)
         {
-            x[count]=radius*cos(j*theta)+x2;
-            y[count]=radius*sin(j*theta);
-            z[count]=0;
+            /* do similar stuff as before */
+            double rb[3]; /* before rotation, the disk particles are on x-y plane */
+            rb[0]=r[i]*cos(j*theta[i]);
+            rb[1]=r[i]*sin(j*theta[i]);
+            rb[2]=0;
+            /* suppose the axis of intersection is along x-axis */
+            /* first rotate around the x-axis by -i2 */
+
+            double rc[3]; /* after the first rotation */
+            rc[0]=rb[0];
+            rc[1]=rb[1]*cos(-i2)-rb[2]*sin(-i2);
+            rc[2]=rb[1]*sin(-i2)+rb[2]*cos(-i2);
+
+            /* now rotate the disk particles around z-axis by -w1 so that the angle between the pericenter axis and the intersection axis is w1 */
+            double rd[3]; /* after the second rotation */
+            
+            rd[0]=cos(-w2)*rc[0]-sin(-w2)*rc[1];
+            rd[1]=sin(-w2)*rc[0]+cos(-w2)*rc[1];
+            rd[2]=rc[2];
+            
+            /* Now so far it is still with respect to the core mass. Now make connections */
+            x[count]=rd[0]+r1[0];
+            y[count]=rd[1]+r1[1];
+            z[count]=rd[2]+r1[2];
+
             count++;
         }
     }
@@ -108,6 +161,34 @@ double x2;
     
 }
 
+/* Give the initial position (x,y,z) of the two core masses at t=-16.4 of the last apocenter */
+void corepos(r1,r2,Rinit,rp,e)
+double r1[];
+double r2[];
+double Rinit;
+double rp;
+double e;
+{
+    double a;
+    double phi;
+    double relativr[3]; /* relative coordinate vector in r,theta,z*/
+
+    a=rp/(1-e);
+    phi=acos((a*(1-e*e)-Rinit)/(Rinit*e));
+    relativr[0]=Rinit;
+    relativr[1]=phi;
+    relativr[2]=0;
+
+    r1[0]=Rinit/2.0f*cos(phi);
+    r1[1]=Rinit/2.0f*sin(phi);
+    r1[2]=0;
+         
+    for (int i=0;i<3;i++){
+        r2[i]=-r1[i];
+    }
+    
+}
 
 
-
+/* print out documents for initial positions */
+void printdat(x,y,z,r1,r2,fp1,fp2,fp3)
