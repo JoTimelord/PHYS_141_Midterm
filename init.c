@@ -69,7 +69,6 @@ double theta[];
     int ringn=11;
     int innern=12;
     int outern=42;
-    double esoft;
     for (int i=0;i<ringn;i++)
     {
         double radius=(0.2+0.05*i)*Rmin;
@@ -118,7 +117,7 @@ double v2[];
             double vel;
 
             /* the speed of the disk particle */
-            vel=sqrt(G*M*r[i]/(pow(r[i],2)+pow(esoft2)));
+            vel=sqrt(G*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
 
             /* set up the disk particle originally in the x-y plane */
             rb[0]=r[i]*cos(j*theta[i]);
@@ -176,7 +175,7 @@ double v2[];
             double vb[3];
             double vel;
 
-            vel=-sqrt(G*M*r[i]/(pow(r[i],2)+pow(esoft2)));
+            vel=-sqrt(G*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
 
             rb[0]=r[i]*cos(j*theta[i]);
             rb[1]=r[i]*sin(j*theta[i]);
