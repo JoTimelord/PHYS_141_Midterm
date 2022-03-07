@@ -17,6 +17,7 @@ void angular();
 void position();
 void corepos(); 
 void printdat();
+void velocity();
 
 int main(argc, argv)
 int argc;
@@ -31,6 +32,7 @@ char *argv[];
     double r[MAXPNT],theta[MAXPNT];
     double r1[MAXPNT],r2[MAXPNT]; /* find out the initial positions of the core masses */
     double x[MAXPNT],y[MAXPNT],z[MAXPNT]; /* the position vector w.r.t. the center of mass of the disk particles */
+    double vx[MAXPNT],vy[MAXPNT],vz[MAXPNT];
     double Rinit,e,rp,w1,w2,i1,i2; /* the Kepler orbits parameters */
 
     Rinit=44;
@@ -47,6 +49,10 @@ char *argv[];
     corepos(r1,r2,Rinit,rp,e);
     position(x,y,z,r,theta,particleN,r1,r2,i1,i2,w1,w2);
     
+    FILE *fp1;
+    fp1=fopen("initdisk.dat","w+");
+    printdat(x,y,z,vx,vy,vz,fp1,fp2,particleN);
+    fclose(fp1);
 
 
 
@@ -197,5 +203,20 @@ double e;
 }
 
 
-/* print out documents for initial positions */
-// void printdat(x,y,z,r1,r2,fp1,fp2,fp3)
+/* print out documents for initial positions of the disk particles */
+void printdat(x,y,z,vx,vy,vz,fp1,fp2,n)
+double x[];
+double y[];
+double z[];
+double vx[];
+double vy[];
+double vz[];
+FILE *fp1;
+FILE *fp2;
+int n;
+{
+    for (int i=0;i<n;i++)
+    {
+        fprintf(fp1,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",x[i],y[i],z[i],vx[i],vy[i],vz[i]);
+    }
+}
