@@ -27,20 +27,25 @@ char *argv[];
     M=M*4.30091*pow(10,-6);
     
     /* set up initial positions */
-    int n,particleN;
+    int particleN;
     double r[MAXPNT],theta[MAXPNT];
     double r1[MAXPNT],r2[MAXPNT]; /* find out the initial positions of the core masses */
     double x[MAXPNT],y[MAXPNT],z[MAXPNT]; /* the position vector w.r.t. the center of mass of the disk particles */
     double Rinit,e,rp,w1,w2,i1,i2; /* the Kepler orbits parameters */
-    
-    
+
+    Rinit=44;
+    e=0.6;
+    rp=Rmin;
+    w1=-90/PI;
+    w2=-90/PI;
+    i1=15/PI;
+    i2=60/PI;
     particleN=297*2;  
 
 
     angular(r,theta);
-    double x[MAXPNT],y[MAXPNT],z[MAXPNT];
     corepos(r1,r2,Rinit,rp,e);
-    position(x,y,z,n,r1,r2,i1,i2,w1,w2);
+    position(x,y,z,r,theta,particleN,r1,r2,i1,i2,w1,w2);
     
 
 
@@ -58,19 +63,21 @@ double theta[];
     for (int i=0;i<ringn;i++)
     {
         double radius=(0.2+0.05*i)*Rmin;
-        double theta=2*PI/(innern+3*i);
+        double the=2*PI/(innern+3*i);
         r[i]=radius;
-        theta[i]=theta;
+        theta[i]=the;
     }
 }
 
 
 /* when applying the rotation matrix, we assume that the pericenter axis is the x-axis. */
 
-void position(x,y,z,n,r1,r2,i1,i2,w1,w2)
+void position(x,y,z,r,theta,n,r1,r2,i1,i2,w1,w2)
 double x[];
 double y[];
 double z[];
+double r[];
+double theta[];
 int n;
 double r1[];
 double r2[];
@@ -191,4 +198,4 @@ double e;
 
 
 /* print out documents for initial positions */
-void printdat(x,y,z,r1,r2,fp1,fp2,fp3)
+// void printdat(x,y,z,r1,r2,fp1,fp2,fp3)
