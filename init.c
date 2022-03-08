@@ -14,9 +14,7 @@ double G=1.0;
 double Rmin=25; /* in kiloparsec */
 
 void angular();
-void particleInitialVel();
 void position();
-void velocity();
 void corepos(); 
 void printdat();
 
@@ -34,7 +32,6 @@ char *argv[];
     double r1[MAXPNT],r2[MAXPNT]; /* find out the initial positions of the core masses */
     double v1[MAXPNT],v2[MAXPNT]; /* find out the initial velocity of the core masses */
     double x[MAXPNT],y[MAXPNT],z[MAXPNT]; /* the position vector w.r.t. the center of mass of the disk particles */
-    double V[MAXPNT]; /* the speed of the disk particle relative to its core mass */
     double vx[MAXPNT],vy[MAXPNT],vz[MAXPNT];
     double Rinit,e,rp,w1,w2,i1,i2; /* the Kepler orbits parameters */
 
@@ -50,14 +47,15 @@ char *argv[];
 
     angular(r,theta);
     corepos(r1,r2,Rinit,rp,e,v1,v2);
-    position(x,y,z,r,theta,particleN,r1,r2,i1,i2,w1,w2,v1,v2);
+    position(x,y,z,vx,vy,vz,r,theta,particleN,r1,r2,i1,i2,w1,w2,v1,v2);
     
     FILE *fp1;
     fp1=fopen("initdisk.dat","w+");
-    printdat(x,y,z,vx,vy,vz,fp1,fp2,particleN);
+    FILE *fp2;
+    fp2=fopen("initcore.dat","w+");
+    printdat(r1,r2,v1,v2,x,y,z,vx,vy,vz,fp1,fp2,particleN);
     fclose(fp1);
-
-
+    fclose(fp2);
 
     return 0;
 }
@@ -217,7 +215,6 @@ double v2[];
             vy[count]=vd[1]+v2[1];
             vz[count]=vd[2]+v2[2];
 
-
             count++;
         }
     }
@@ -230,8 +227,6 @@ double v2[];
     }
     
 }
-
-
 
 
 /* Give the initial position (x,y,z) of the two core masses at t=-16.4 of the last apocenter */
@@ -247,8 +242,21 @@ double v2[];
     double a;
     double phi;
     double relativr[3]; /* relative coordinate vector in r,theta,z*/
+    double relativv; /* dtheta/dt of the relative coordinate vector */
+    double T; /* period of the kepler orbit */
+    double p,b;
+    double arealvel;
 
     a=rp/(1-e);
+    p=rp*(1+e);
+    b=p/sqrt(1-e*e);
+    /* Kepler's third law to get period */
+    T=sqrt(4*PI*PI*pow(a,3)/(G*2*M));
+
+    /* Kepler's second law to get orbital speed */
+    arealvel=PI*a*b/T;
+    relativv=arealvel*2/pow(Rinit,2)*Rinit;
+
     phi=acos((a*(1-e*e)-Rinit)/(Rinit*e));
     relativr[0]=Rinit;
     relativr[1]=phi;
@@ -257,16 +265,25 @@ double v2[];
     r1[0]=Rinit/2.0f*cos(phi);
     r1[1]=Rinit/2.0f*sin(phi);
     r1[2]=0;
+    v1[0]=-sin(phi)*relativv;
+    v1[1]=cos(phi)*relativv;
+    v1[2]=0;
          
     for (int i=0;i<3;i++){
         r2[i]=-r1[i];
+        v2[i]=-v1[i];
     }
+
     
 }
 
 
-/* print out documents for initial positions of the disk particles */
-void printdat(x,y,z,vx,vy,vz,fp1,fp2,n)
+/* print out documents for initial positions of the disk particles and the core masses in two separate files */
+void printdat(r1,r2,v1,v2,x,y,z,vx,vy,vz,fp1,fp2,n)
+double r1[];
+double r2[];
+double v1[];
+double v2[];
 double x[];
 double y[];
 double z[];
@@ -281,4 +298,6 @@ int n;
     {
         fprintf(fp1,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",x[i],y[i],z[i],vx[i],vy[i],vz[i]);
     }
+    fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r1[2],v1[0],v1[1],v1[2]);
+    fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E",r2[0],r2[1],r2[2],v2[0],v2[1],v2[2]);
 }
