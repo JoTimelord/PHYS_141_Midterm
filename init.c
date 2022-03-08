@@ -17,6 +17,7 @@ void angular();
 void position();
 void corepos(); 
 void printdat();
+void checkinit();
 
 int main(argc, argv)
 int argc;
@@ -56,6 +57,13 @@ char *argv[];
     printdat(r1,r2,v1,v2,x,y,z,vx,vy,vz,fp1,fp2,particleN);
     fclose(fp1);
     fclose(fp2);
+    /* the following is to check the initial conditions */
+    FILE *fp3;
+    fp3=fopen("initplummer.dat","w+");
+    checkinit(r1,r2,x,y,z,fp3,particleN);
+    fclose(fp3);
+    
+
 
     return 0;
 }
@@ -301,3 +309,31 @@ int n;
     fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r1[2],v1[0],v1[1],v1[2]);
     fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E",r2[0],r2[1],r2[2],v2[0],v2[1],v2[2]);
 }
+
+void checkinit(r1,r2,x,y,z,fp3,n)
+double r1[];
+double r2[];
+double x[];
+double y[];
+double z[];
+FILE *fp3;
+int n;
+{
+    for (int i=0;i<n;i++)
+    {
+        fprintf(fp3,"%-14.4E%-14.4E%-14.4E\n",x[i],y[i],z[i]);
+    }
+    fprintf(fp3,"%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r1[2]);
+    fprintf(fp3,"%-14.4E%-14.4E%-14.4E\n",r2[0],r2[1],r2[2]);
+    /* pick a random point on the outer ring and check its distance from the center mass */
+    double dist;
+    dist=pow(x[296]-r1[0],2)+pow(y[296]-r1[1],2)+pow(z[296]-r1[2],2);
+    dist=sqrt(dist); 
+    printf("The distance between an outer radius point and the core mass is %-14.4E\n",dist);
+    /* check that the distance between two core masses is Rinit */
+    double dist1;
+    dist1=pow(r2[0]-r1[0],2)+pow(r2[1]-r1[1],2)+pow(r2[2]-r1[2],2);
+    dist1=sqrt(dist1);
+    printf("The distance between two core masses is %-14.4E\n",dist1);
+}
+

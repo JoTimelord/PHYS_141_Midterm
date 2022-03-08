@@ -4,23 +4,26 @@
 #include <string.h>
 #include <unistd.h>
 
+FILE *input1;
+FILE *input2;
+FILE *outputFile;
 
-double e = 0.6; //eccentricity 
-double a, b ; //axeses of ellipse 
-FILE * inputFile;
-G = 1; 
-m1  = 1;
-m2 = 1;
-
-#define MAXPNT 3000            /* maximum number of points */
 #define PI 3.141592654
+#define MAXPNT 3000
+#define kND 3
+
+/* define global arrays to store positions */
+double positions[MAXPNT][kND],velocities[MAXPNT][kND];
+double r1[kND],r2[kND],v1[kND],v2[kND];
+
 
 double M,Rinit;
 double G=1.0; 
 double Rmin=25;   
+double e=0.6; //eccentricity 
+double a,b; //axeses of ellipse 
 
 void readInit();
-void getCofM();
 void getrelCofM();
 void accel();
 //void getInitialVelocities();
@@ -34,53 +37,60 @@ int main(argc, argv)
 int argc;
 char *argv[];
 {
- M=pow(10,11); 
-
+    M=pow(10,11); /* in solar mass */
+    /* to keep G as 1, convert M into a new mass unit */
     M=M*4.30091*pow(10,-6);
-    
 
     int particleN;
     double r[MAXPNT],theta[MAXPNT]; 
     double x[MAXPNT],y[MAXPNT],z[MAXPNT]; 
     double Rinit,e,rp,w1,w2,i1,i2; 
-     int n, mstep, nout, nstep;
+    int n, mstep, nout, nstep;
     double eta, tmax, episqr;
 
     mstep = 5;            
     nout = 1;                 
     dt = 2000;            
-    tmax=dt*100000;
+    tmax = dt*100000;
+    particleN = 297*2;
 
-inputFile = fopen("initc.data", "r");
-
+    input1 = fopen("initdisk.dat", "r");
+    input2 = fopen("initcore.dat", "r");
+    
+    readInit(particleN);
 
 }
 
 
-void readInit(n,Rmin,r1,r2,x,y,z)
-int n; 
-double Rmin;
-double r1[], r2[], x[], y[], z[];
+void readInit(n)
+int n;
 {
-    fscanf(inputFile, "%i", &n);
-    fscanf(inputFile, "%lf", &Rmin);
-
-    //will probably have to do a loop like in Aeresth 
-    fscanf(inputFile, "%lf", &r1);
-    fscanf(inputFile, "%lf", &r2);
-    fscanf(inputFile, "%lf", &x);
-    fscanf(inputFile, "%lf", &y);
-    fscanf(inputFile, "%lf", &z);
-    printf("\n");
+    int i,j;
+    /* this reads the initial positions and velocities of the disk particles */
+    for (i=0;i<n;i++)
+    {
+        for (j=0;j<kND;j++)
+        {
+            fscanf(input1,"%lf",&positions[i][j]);
+        }
+        for (j=0;j<kND;j++)
+        {
+            fscanf(input1,"%lf",&velocities[i][j]);
+        }
+    }
+    
+    /* the following reads in the core masses */
+    for (j=0;j<kND;j++)
+    {
+        fscanf(input2,"%lf",&r1[kND]);
+        fscanf(input2,"%lf",&v1[kND]);
+    }
+    for (j=0;j<kND;j++)
+    {
+        fscanf(input2,"%lf",&r2[kND]);
+        fscanf(input2,"%lf",&v2[kND]);
+    }
 }
-
-//void getCofM(x,y,z, r1,r2)
-//double x[],y[],z[],r1[],r2[];
-//{
-/* will get Center of Mass of each Galaxy*/
-
-
-//}
 
 
 

@@ -1,0 +1,5 @@
+export PATH=/Applications/glnemo2.app/Contents/MacOS:$PATH
+
+csh
+source /usr/local/physics/nemo_cvs/nemo_start
+
