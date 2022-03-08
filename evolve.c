@@ -15,6 +15,10 @@ FILE *output;
 double positions[MAXPNT][kND],velocities[MAXPNT][kND];
 double r1[kND],r2[kND],v1[kND],v2[kND];
 
+/* define global arrays to store accel */
+double accel[MAXPNT][kND];
+double a1[kND],a2[kND];
+
 
 double M,Rinit;
 double G=1.0; 
@@ -23,11 +27,10 @@ double e=0.6; //eccentricity
 double a,b; //axeses of ellipse 
 
 void readInit();
-void readInitdisk();
-void readInitcore();
-void getrelCofM();
+void coreaccel();
 void diskparticleaccel();
 void diskparticlesInteract();
+void getrelCofM();
 void printEnergy();
 
 int main(argc, argv)
@@ -84,63 +87,6 @@ int n;
     }
 }
 
-void readInitdisk(d1x,d1y,d1z,d1vx,d1vy,d1vz,d2x,d2y,d2z,d2vx,d2vy,d2vz)
-double d1x[], d1y[], d1z[], d1vx[], d1vy[], d1vz[];
-double d2x[], d2y[], d2z[], d2vx[], d1vy[], d2vz[];
-{
-    int i = 0;
-    for (i=0; i >= 297; i++){
-    i = i+1;
-    fscanf(inputFile1, "%lf", &d1x);
-    fscanf(inputFile1, "%lf", &d1y);
-    fscanf(inputFile1, "%lf", &d1z);
-    fscanf(inputFile1, "%lf", &d1vx);
-    fscanf(inputFile1, "%lf", &d1vy);
-    fscanf(inputFile1, "%lf", &d1vz);
-    printf("\n");
-}
-    for (i=298; i >= 594; i++){
-    i=i+1;
-    fscanf(inputFile1, "%lf", &d2x);
-    fscanf(inputFile1, "%lf", &d2y);
-    fscanf(inputFile1, "%lf", &d2z);
-    fscanf(inputFile1, "%lf", &d2vx);
-    fscanf(inputFile1, "%lf", &d2vy);
-    fscanf(inputFile1, "%lf", &d2vz);
-    printf("\n");
-}
-
-<<<<<<< HEAD
-
-}
-
-void readInitcore(g1x,g1y,g1z,g1vx,g1vy,g1vz,g2x,g2y,g2z,g2vx,g2vy,g2vz)
-double g1x[], g1y[], g1z[], g1vx[], g1vy[], g1vz[];
-double g2x[], g2y[], g2z[], g2vx[], g1vy[], g2vz[];
-{
-    int i = 0;
-    for (i=0; i >=1 ; i++){
-    i = i+1;
-    fscanf(inputFile1, "%lf", &g1x);
-    fscanf(inputFile1, "%lf", &g1y);
-    fscanf(inputFile1, "%lf", &g1z);
-    fscanf(inputFile1, "%lf", &g1vx);
-    fscanf(inputFile1, "%lf", &g1vy);
-    fscanf(inputFile1, "%lf", &g1vz);
-    printf("\n");
-}
-    for (i=1; i >=2; i++){
-    i=i+1;
-    fscanf(inputFile1, "%lf", &g2x);
-    fscanf(inputFile1, "%lf", &g2y);
-    fscanf(inputFile1, "%lf", &g2z);
-    fscanf(inputFile1, "%lf", &g2vx);
-    fscanf(inputFile1, "%lf", &g2vy);
-    fscanf(inputFile1, "%lf", &g2vz);
-    printf("\n");
-}
-
-
 
 void getrelCofM(r1,r2,r3,n)
 int n;
@@ -154,42 +100,59 @@ double r1[],r2[],r3[];
 
 }
 
-
-
-
-
-
-void diskparticleaccel(ax, ay, az, g1x, g1y, g1z, g2x,g2y,g2z,x, y, z, n)                
-double ax[];                 
-double ay[];                 
-double az[];             
-double g1x[];
-double g1y[];
-double g1z[];
-double g2x[];
-double g2y[];
-double g2z[];             
-double x[];                
-double y[];                 
-double z[];              
-int n;                            
+/* Compute the acceleration of the core masses */
+void coreaccel()
 {
-    for (int i=0;i<n;i++){ 
-        ax[i]=0.0;
-        ay[i]=0.0;
-        az[i]=0.0;
-        for (int j=0;j<n;j++){ 
-            if (i!=j){
-                double rij1=sqrt(pow(x[i]-g1x[j],2)+pow(y[i]-g1y[j],2)+pow(z[i]-g1z[j],2)); 
-                double rij2=sqrt(pow(x[i]-g2x[j],2)+pow(y[i]-g2y[j],2)+pow(z[i]-g2z[j],2)); 
+    int j;
+    double arelativ[kND];
+    double dist;
+    
+    dist=pow(r1[0]-r2[0],2)+pow(r1[1]-r2[1],2)+pow(r1[2]-r2[2],2);
+    dist=sqrt(dist);
+    for (j=0;j<kND;j++)
+    {
+       arelativ[j]=-G*M*2r1[j]/pow(dist,3);
+       a1[j]=arelativ[j]/2;
+       a2[j]=-a1[j];
+    }
+    
+}
 
-                ax[i]=ax[i]- G*((-m1)*(x[i]-g1x[j])/rij1*rij1*rij1)*((-m2)*(x[i]-g2x[j])/rij2*rij2*rij2);
-                ay[i]=ay[i]- G*((-m1)*(y[i]-g1y[j])/rij1*rij1*rij1)*((-m2)*(y[i]-g2y[j])/rij2*rij2*rij2);
-                az[i]=az[i]- G*((-m1)*(z[i]-g1z[j])/rij1*rij1*rij1)*((-m2)*(z[i]-g2z[j])/rij2*rij2*rij2);
-            }
+
+/* Compute the acceleration of the disk particles */
+void diskparticleaccel(n)                
+int n
+{
+    int i,j
+    /* Initialize acceleration arrays */
+    for (i=0;i<n;i++){ 
+        for (j=0;j<kND;j++){
+            accel[i][j]=0;
+        } 
+    }
+
+    for (i=0;i<n;i++){ 
+        double ri1=0;
+        double ri2=0;
+
+        for (j=0;j<kND;j++)
+        {
+            ri1=ri1+pow(r1[j]-positions[i][j],2);
+        }
+        ri1=sqrt(ri1);
+        for (j=0;j<kND;j++)
+        {
+            ri2=ri2+pow(r2[j]-positions[i][j],2);
+        }
+        ri2=sqrt(ri2);
+
+        for (j=0;j<kND;j++)
+        {
+           accel[i][j]=accel[i][j]-G*M*(positions[i][j]-r1[j])/pow(ri1,3)-G*M*(positions[i][j]-r2[j])/pow(ri2,3);
         }
     }
 }
+
 
 
 void diskparticlesInteract(x, y, z, w, v, u, E, n, dt, g1x,g1y,g1z,g2x,g2y,g2z)           
