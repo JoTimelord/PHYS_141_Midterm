@@ -42,6 +42,8 @@ char *argv[];
     M=pow(10,11); /* in solar mass */
     /* to keep G as 1, convert M into a new mass unit */
     M=M*4.30091*pow(10,-6);
+    /* to keep velocity and distance consistent, scale G */
+    G=G*pow(1.022*pow(10,-9),2);
 
     int n, mstep, nout, nstep;
     double eta, tmax, episqr;
@@ -49,9 +51,9 @@ char *argv[];
     double tnow;
     int particleN;
 
-    mstep = 50;            
+    mstep = 1000;            
     nout = 1;                 
-    dt = pow(10,8);            
+    dt = pow(10,8)*0.1;            
     tmax = dt*40;
     particleN = 297*2;
     tnow=-16.4;
@@ -69,7 +71,7 @@ char *argv[];
             printstate(particleN); /* then call output routine */
         }
         diskparticlesInteract(particleN,dt); /* take integration step    */
-        tnow = tnow + 1;        /* and update value of time */
+        tnow = tnow + 0.01;        /* and update value of time */
     }
     if (mstep % nout == 0) /* if last output wanted    */
     {
@@ -151,9 +153,8 @@ void coreaccel()
     dist=sqrt(dist);
     for (j=0;j<kND;j++)
     {
-       arelativ[j]=-G*M*2*r1[j]/pow(dist,3);
-       a1[j]=arelativ[j]/2;
-       a2[j]=-a1[j];
+       a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3);
+       a2[j]=G*M*(r1[j]-r2[j])/pow(dist,3);
     }
     
 }

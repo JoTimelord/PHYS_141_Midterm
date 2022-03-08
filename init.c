@@ -123,7 +123,7 @@ double v2[];
             double vel;
 
             /* the speed of the disk particle */
-            vel=sqrt(G*pow(pow(1.02201,-6),2)*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
+            vel=sqrt(G*pow(1.02201*pow(10,-9),2)*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
 
             /* set up the disk particle originally in the x-y plane */
             rb[0]=r[i]*cos(j*theta[i]);
@@ -180,7 +180,7 @@ double v2[];
             double vb[3];
             double vel;
 
-            vel=-sqrt(G*pow(pow(1.02201,-6),2)*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
+            vel=-sqrt(G*pow(1.02201*pow(10,-9.0),2.0)*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
 
             rb[0]=r[i]*cos(j*theta[i]);
             rb[1]=r[i]*sin(j*theta[i]);
@@ -222,11 +222,6 @@ double v2[];
             vy[count]=vd[1]+v2[1];
             vz[count]=vd[2]+v2[2];
 
-            vx[count]=vx[count]*pow(1.02201,-6);
-            vy[count]=vy[count]*pow(1.02201,-6);
-            vz[count]=vz[count]*pow(1.02201,-6);
-
-
             count++;
         }
     }
@@ -263,7 +258,7 @@ double v2[];
     p=rp*(1+e);
     b=p/sqrt(1-e*e);
     /* Kepler's third law to get period */
-    T=sqrt(4*PI*PI*pow(a,3)/(G*pow(pow(1.02201,-6),2)*2*M)); /* this is in calendar year */
+    T=sqrt(4*PI*PI*pow(a,3)/(G*pow(1.02201*pow(10,-9.0),2.0)*2*M)); /* this is in calendar year */
 
     /* Kepler's second law to get orbital speed */
     arealvel=PI*a*b/T;
