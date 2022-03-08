@@ -49,7 +49,7 @@ char *argv[];
     double tnow;
     int particleN;
 
-    mstep = 5;            
+    mstep = 50;            
     nout = 1;                 
     dt = pow(10,8);            
     tmax = dt*40;
@@ -62,14 +62,13 @@ char *argv[];
 
     readInit(particleN);
     readCore();
-    diskparticlesInteract();
 
     for (nstep = 0; nstep < mstep; nstep++) {   /* loop mstep times in all  */
         if (nstep % nout == 0)          /* if time to output state  */
         {
             printstate(particleN); /* then call output routine */
         }
-        diskparticlesInteract(); /* take integration step    */
+        diskparticlesInteract(particleN,dt); /* take integration step    */
         tnow = tnow + 1;        /* and update value of time */
     }
     if (mstep % nout == 0) /* if last output wanted    */
@@ -90,19 +89,19 @@ void readCore()
 /* the following reads in the core masses */
     for (j=0;j<kND;j++)
     {
-        fscanf(input2,"%lf",&r1[kND]);
+        fscanf(input2,"%lf",&r1[j]);
     }
     for (j=0;j<kND;j++)
     {
-        fscanf(input2,"%lf",&v1[kND]);
+        fscanf(input2,"%lf",&v1[j]);
     }
     for (j=0;j<kND;j++)
     {
-        fscanf(input2,"%lf",&r2[kND]);
+        fscanf(input2,"%lf",&r2[j]);
     }
     for (j=0;j<kND;j++)
     {
-        fscanf(input2,"%lf",&v2[kND]);
+        fscanf(input2,"%lf",&v2[j]);
     }
 
     printf("The core positions are: %-14.4E\n",r1[0]);
