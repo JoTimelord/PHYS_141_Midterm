@@ -156,7 +156,7 @@ void coreaccel()
     for (j=0;j<kND;j++)
     {
        a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3);
-       a2[j]=-G*M*(r2[j]-r2[j])/pow(dist,3);
+       a2[j]=-G*M*(r2[j]-r1[j])/pow(dist,3);
     }
     
 }
