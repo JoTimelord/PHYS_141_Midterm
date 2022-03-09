@@ -235,6 +235,54 @@ double v2[];
     
 }
 
+/* give the initial position (x,y,z) of the two core masses at t=-16.4 directly computed from the two ellipitcal orbits */
+void corepossep(r1,r2,rp,e,v1,v2,tinit)
+double r1[];
+double r2[];
+double rp;
+double e;
+double v1[];
+double v2[];
+double tinit; /* in 10^8 calendar year */
+{
+    double a;
+    double T; /* period of the kepler orbit */
+    double p,b;
+    double arealvel;
+    double r1i[3];
+    double r2i[3];
+
+    p=rp*(1+e);
+    b=p/sqrt(1-e*e);
+    a=p/(1-e*e);
+
+    /* Period */
+    T=sqrt(4*PI*PI*pow(a,3)/(G*pow(1.02201*pow(10,-9.0),2.0)*2*M)); /* this is in calendar year */
+    T=T/pow(10,8); /* in time units */
+
+    /* orbital speed */
+    arealvel=PI*a*b/T;
+
+    /* Since at t=0, r1-r2=25 kpc, tentatively set the coordinate */
+    ri1[0]=-25;
+    ri1[1]=0;
+    ri1[2]=0;
+    for (int j=0;j<3;j++){
+        ri2[j]=-ri1[j];
+    }
+
+    double t_apo,t_init;
+    t_apo=-T/2.0f;
+    t_init=t_apo-16.4;
+
+    
+    
+
+
+
+
+
+}
 
 /* Give the initial position (x,y,z) of the two core masses at t=-16.4 of the last apocenter */
 void corepos(r1,r2,Rinit,rp,e,v1,v2)
@@ -254,8 +302,9 @@ double v2[];
     double p,b;
     double arealvel;
 
-    a=rp/(1-e);
+    /* for the relative coordinate vector, rp is twice the individual one */
     p=rp*(1+e);
+    a=p/(1-e*e);
     b=p/sqrt(1-e*e);
     /* Kepler's third law to get period */
     T=sqrt(4*PI*PI*pow(a,3)/(G*pow(1.02201*pow(10,-9.0),2.0)*2*M)); /* this is in calendar year */
