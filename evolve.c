@@ -297,5 +297,5 @@ void checkcore()
     double radius1, radius2;
     radius1=sqrt(pow(r1[0],2)+pow(r1[1],2)+pow(r1[2],2));
     radius2=sqrt(pow(r2[0],2)+pow(r2[1],2)+pow(r2[2],2));
-    fprintf(core,"%-14.4E%-14.4E\n",radius1,radius2);
+    fprintf(core,"%-14.4E%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r2[0],r2[1]);
 }
