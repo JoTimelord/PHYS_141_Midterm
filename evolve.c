@@ -26,6 +26,9 @@ double Rmin=25;
 double e=0.6; //eccentricity 
 double a,b; //axeses of ellipse 
 
+double tapo;
+double tinit;
+
 void readInit();
 void readCore();
 void coreaccel();

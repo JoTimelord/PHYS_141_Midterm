@@ -12,9 +12,12 @@
 double M,Rinit;
 double G=1.0; 
 double Rmin=25; /* in kiloparsec */
+double tinit;
+double tapo;
 
 void angular();
 void position();
+void corepossep();
 void corepos(); 
 void printdat();
 void checkinit();
@@ -47,7 +50,7 @@ char *argv[];
 
 
     angular(r,theta);
-    corepos(r1,r2,Rinit,rp,e,v1,v2);
+    corepossep(r1,r2,rp,e,v1,v2,tapo);
     position(x,y,z,vx,vy,vz,r,theta,particleN,r1,r2,i1,i2,w1,w2,v1,v2);
     
     FILE *fp1;
@@ -236,18 +239,19 @@ double v2[];
 }
 
 /* give the initial position (x,y,z) of the two core masses at t=-16.4 directly computed from the two ellipitcal orbits */
-void corepossep(r1,r2,rp,e,v1,v2,tinit)
+void corepossep(r1,r2,rp,e,v1,v2,tapo)
 double r1[];
 double r2[];
 double rp;
 double e;
 double v1[];
 double v2[];
-double tinit; /* in 10^8 calendar year */
+double tapo; /* in 10^8 calendar year */
 {
     double a;
     double T; /* period of the kepler orbit */
     double p,b;
+    double ra;
     double arealvel;
     double r1i[3];
     double r2i[3];
@@ -255,6 +259,7 @@ double tinit; /* in 10^8 calendar year */
     p=rp*(1+e);
     b=p/sqrt(1-e*e);
     a=p/(1-e*e);
+    ra=a*(1+e);
 
     /* Period */
     T=sqrt(4*PI*PI*pow(a,3)/(G*pow(1.02201*pow(10,-9.0),2.0)*2*M)); /* this is in calendar year */
@@ -263,28 +268,27 @@ double tinit; /* in 10^8 calendar year */
     /* orbital speed */
     arealvel=PI*a*b/T;
 
-    /* Since at t=0, r1-r2=25 kpc, tentatively set the coordinate */
-    ri1[0]=-25;
-    ri1[1]=0;
-    ri1[2]=0;
+
+    tapo=-T/2.0f;
+    
+    /* At apocenter the velocity has only tangential component along y-direction */
+    v1[0]=0;
+    v1[1]=arealvel*2/ra;
+    v1[2]=0;
     for (int j=0;j<3;j++){
-        ri2[j]=-ri1[j];
+        v2[j]=-v1[j];
     }
-
-    double t_apo,t_init;
-    t_apo=-T/2.0f;
-    t_init=t_apo-16.4;
-
-    
-    
-
-
-
-
-
+    r1[0]=ra;
+    r1[1]=0;
+    r1[2]=0;
+    for (int j=0;j<3;j++){
+        r2[j]=-r1[j];
+    }
+    printf("the start time for the core masses is %-14.4E.\n",tapo);
 }
 
 /* Give the initial position (x,y,z) of the two core masses at t=-16.4 of the last apocenter */
+/* warning: this needs debugging */
 void corepos(r1,r2,Rinit,rp,e,v1,v2)
 double r1[];
 double r2[];
@@ -349,10 +353,14 @@ FILE *fp1;
 FILE *fp2;
 int n;
 {
+    tinit=-16.4+tapo;
+    
+    fprintf(fp1,"%-14.4E\n",tinit);
     for (int i=0;i<n;i++)
     {
         fprintf(fp1,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",x[i],y[i],z[i],vx[i],vy[i],vz[i]);
     }
+    fprintf(fp1,"%-14.4E\n",tapo);
     fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r1[2],v1[0],v1[1],v1[2]);
     fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E",r2[0],r2[1],r2[2],v2[0],v2[1],v2[2]);
 }
