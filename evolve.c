@@ -1,4 +1,4 @@
- #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
@@ -7,6 +7,8 @@
 FILE *input1;
 FILE *input2;
 FILE *output;
+FILE *core;
+
 
 #define MAXPNT 3000
 #define kND 3
@@ -26,7 +28,6 @@ double Rmin=25;
 double e=0.6; //eccentricity 
 double a,b; //axeses of ellipse 
 
-double tapo;
 double tinit;
 
 void readInit();
@@ -35,6 +36,7 @@ void coreaccel();
 void diskparticleaccel();
 void diskparticlesInteract();
 void printstate();
+void checkcore();
 // void printEnergy();
 
 
@@ -51,27 +53,36 @@ char *argv[];
     int n, mstep, nout, nstep;
     double eta, tmax, episqr;
     double dt;
+    double scale;
     double tnow;
+    double tend;
     int particleN;
 
-    mstep = 1000;            
+    mstep = 500;            
     nout = 1;                 
-    dt = pow(10,8)*0.1;            
+    scale = pow(10,8);
+    dt = 0.1*scale;            
     tmax = dt*40;
     particleN = 297*2;
-    tnow=-16.4;
+    
 
     input1 = fopen("initdisk.dat", "r");
     input2 = fopen("initcore.dat", "r");
     output = fopen("evolution.dat", "w+");
+    core = fopen("coremass.dat","w+");
 
     readInit(particleN);
     readCore();
+    
+    tnow=tinit;
+    tend=tnow+mstep*dt/scale;
+    
 
     for (nstep = 0; nstep < mstep; nstep++) {   /* loop mstep times in all  */
         if (nstep % nout == 0)          /* if time to output state  */
         {
             printstate(particleN); /* then call output routine */
+            checkcore();
         }
         diskparticlesInteract(particleN,dt); /* take integration step    */
         tnow = tnow + 0.01;        /* and update value of time */
@@ -79,11 +90,13 @@ char *argv[];
     if (mstep % nout == 0) /* if last output wanted    */
     {
         printstate(particleN); /* output last step */
+        checkcore();
     }              
 
     fclose(input1);
     fclose(input2);
     fclose(output);
+    printf("The end time is %14.4E\n",tend);
 
     return 0;
 }
@@ -92,6 +105,7 @@ void readCore()
 {
     int j;
 /* the following reads in the core masses */
+    fscanf(input2,"%lf",&tinit);
     for (j=0;j<kND;j++)
     {
         fscanf(input2,"%lf",&r1[j]);
@@ -108,9 +122,7 @@ void readCore()
     {
         fscanf(input2,"%lf",&v2[j]);
     }
-
     printf("The core positions are: %-14.4E\n",r1[0]);
-
 }
 
 
@@ -132,32 +144,19 @@ int n;
     }
 }
 
-
-void getrelCofM(r1,r2,r3,n)
-int n;
-double r1[],r2[],r3[];
-{
-
-    int i;
-    for (i = 0; i < n; i++)	{		
-	r3[i] = r1[i]-r2[i];
-    }
-
-}
-
 /* Compute the acceleration of the core masses */
 void coreaccel()
 {
     int j;
-    double arelativ[kND];
-    double dist;
-    
-    dist=pow(r1[0]-r2[0],2)+pow(r1[1]-r2[1],2)+pow(r1[2]-r2[2],2);
+    double dist=0;
+
+    for (j=0;j<kND;j++){
+        dist+=pow(r1[j],2);}
     dist=sqrt(dist);
     for (j=0;j<kND;j++)
     {
-       a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3);
-       a2[j]=G*M*(r1[j]-r2[j])/pow(dist,3);
+       a1[j]=-G*M*(r1[j])/pow(dist,3);
+       a2[j]=-G*M*(r2[j])/pow(dist,3);
     }
     
 }
@@ -192,7 +191,7 @@ int n;
 
         for (j=0;j<kND;j++)
         {
-           accel[i][j]=accel[i][j]-G*M*(positions[i][j]-r1[j])/pow(ri1,3)-G*M*(positions[i][j]-r2[j])/pow(ri2,3);
+           accel[i][j]=accel[i][j]-G*M*(positions[i][j]-r1[j])/(pow(ri1,3))-G*M*(positions[i][j]-r2[j])/(pow(ri2,3));
         }
     }
 }
@@ -292,3 +291,11 @@ int n;
 //    fprintf(fp, "%-14.4f%-17.7E%-17.7E\n",tnow,Energy,MomentumTotal);
 //}
 //
+
+void checkcore()
+{
+    double radius1, radius2;
+    radius1=sqrt(pow(r1[0],2)+pow(r1[1],2)+pow(r1[2],2));
+    radius2=sqrt(pow(r2[0],2)+pow(r2[1],2)+pow(r2[2],2));
+    fprintf(core,"%-14.4E%-14.4E\n",radius1,radius2);
+}

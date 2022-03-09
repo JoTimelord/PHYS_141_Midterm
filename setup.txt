@@ -3,3 +3,4 @@ export PATH=/Applications/glnemo2.app/Contents/MacOS:$PATH
 csh
 source /usr/local/physics/nemo_cvs/nemo_start
 
+tabtos in=evolution.dat out=evolution.snap nbody=596 block1=x,y,z times=-16.4:33.6:0.1

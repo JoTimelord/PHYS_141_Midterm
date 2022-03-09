@@ -12,7 +12,6 @@
 double M,Rinit;
 double G=1.0; 
 double Rmin=25; /* in kiloparsec */
-double tinit;
 double tapo;
 
 void angular();
@@ -50,7 +49,7 @@ char *argv[];
 
 
     angular(r,theta);
-    corepossep(r1,r2,rp,e,v1,v2,tapo);
+    corepossep(r1,r2,rp,e,v1,v2);
     position(x,y,z,vx,vy,vz,r,theta,particleN,r1,r2,i1,i2,w1,w2,v1,v2);
     
     FILE *fp1;
@@ -188,8 +187,8 @@ double v2[];
             rb[0]=r[i]*cos(j*theta[i]);
             rb[1]=r[i]*sin(j*theta[i]);
             rb[2]=0;
-            vb[0]=-vel*sin(j*theta[i]);
-            vb[1]=vel*cos(j*theta[i]);
+            vb[0]=vel*sin(j*theta[i]);
+            vb[1]=-vel*cos(j*theta[i]);
             vb[2]=0;
 
 
@@ -239,14 +238,13 @@ double v2[];
 }
 
 /* give the initial position (x,y,z) of the two core masses at t=-16.4 directly computed from the two ellipitcal orbits */
-void corepossep(r1,r2,rp,e,v1,v2,tapo)
+void corepossep(r1,r2,rp,e,v1,v2)
 double r1[];
 double r2[];
 double rp;
 double e;
 double v1[];
 double v2[];
-double tapo; /* in 10^8 calendar year */
 {
     double a;
     double T; /* period of the kepler orbit */
@@ -263,17 +261,16 @@ double tapo; /* in 10^8 calendar year */
 
     /* Period */
     T=sqrt(4*PI*PI*pow(a,3)/(G*pow(1.02201*pow(10,-9.0),2.0)*2*M)); /* this is in calendar year */
-    T=T/pow(10,8); /* in time units */
 
     /* orbital speed */
     arealvel=PI*a*b/T;
 
-
     tapo=-T/2.0f;
+    tapo=tapo/pow(10,8); /* convert that to readable units */
     
     /* At apocenter the velocity has only tangential component along y-direction */
     v1[0]=0;
-    v1[1]=arealvel*2/ra;
+    v1[1]=arealvel*2/ra; /* in parsec/year */
     v1[2]=0;
     for (int j=0;j<3;j++){
         v2[j]=-v1[j];
@@ -353,14 +350,12 @@ FILE *fp1;
 FILE *fp2;
 int n;
 {
-    tinit=-16.4+tapo;
     
-    fprintf(fp1,"%-14.4E\n",tinit);
     for (int i=0;i<n;i++)
     {
         fprintf(fp1,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",x[i],y[i],z[i],vx[i],vy[i],vz[i]);
     }
-    fprintf(fp1,"%-14.4E\n",tapo);
+    fprintf(fp2,"%-14.4E\n",tapo);
     fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r1[2],v1[0],v1[1],v1[2]);
     fprintf(fp2,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E",r2[0],r2[1],r2[2],v2[0],v2[1],v2[2]);
 }
