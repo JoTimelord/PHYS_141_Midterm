@@ -57,8 +57,13 @@ char *argv[];
     double dt;
     int particleN;
 
+<<<<<<< HEAD
     mstep = 1000000;            
     nout = 1000;                 
+=======
+    mstep = 900;            
+    nout = 1;                 
+>>>>>>> Joy
     scale = pow(10,8);
     dt = 0.01*scale;  /* in calendar year */         
     particleN = 297*2;
@@ -151,13 +156,22 @@ void coreaccel()
     double dist=0;
 
     for (j=0;j<kND;j++){
+<<<<<<< HEAD
         dist=dist+pow(r1[j]-r2[j],2);} /* in kiloparsec */
+=======
+        dist+=pow(r1[j],2);}
+>>>>>>> Joy
     dist=sqrt(dist);
     // double ac=-G*M/(dist*dist);
     for (j=0;j<kND;j++)
     {
+<<<<<<< HEAD
         a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3.0);
         a2[j]=-G*M*(r2[j]-r1[j])/pow(dist,3.0);
+=======
+       a1[j]=-G*M*(r1[j])/pow(dist,3);
+       a2[j]=-G*M*(r2[j])/pow(dist,3);
+>>>>>>> Joy
     }
     
 }
