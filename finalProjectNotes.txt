@@ -1,0 +1,4 @@
+Instead of an elliptical orbit, the trajectory will follow a parabolic orbit, I think it is obtained be setting e = 1;
+Initial conditions are described in the collision orbit note;
+Wa and Wb are not identical antymore; ia and ib are also different;
+Galaxies should be created using MkGalaxy
