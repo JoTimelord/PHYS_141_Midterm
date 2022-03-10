@@ -1,0 +1,8 @@
+'init.c' -- Yuntong Zhou
+Debugging: Yuntong Zhou & Josue Zuniga
+'evolve.c' -- Yuntong Zhou (functions), Josue Zuniga (file structure)
+Debugging: Yuntong Zhou & Hatim Tapory
+
+Animation generation: Yuntong Zhou
+python scripts: Josue Zuniga
+Aaserth code modification: Hatim Tapory
