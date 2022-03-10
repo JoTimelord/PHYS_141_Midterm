@@ -26,8 +26,8 @@ int argc;
 char *argv[];
 {
     M=pow(10,11); /* in solar mass */
-    /* to keep G as 1, convert M into a new mass unit */
-    G=4.301*pow(10,-6)*pow(1.022*pow(10,-9),2);
+    G=4.301*pow(10,-6)*pow(1.022*pow(10,-9),2); /* now G is in solar mass,kp,calendar year */
+
     
     /* set up initial positions */
     int particleN;
@@ -38,7 +38,6 @@ char *argv[];
     double vx[MAXPNT],vy[MAXPNT],vz[MAXPNT];
     double Rinit,e,rp,w1,w2,i1,i2; /* the Kepler orbits parameters */
 
-    Rinit=44;
     e=0.6;
     rp=Rmin;
     w1=-90/PI;
@@ -125,7 +124,7 @@ double v2[];
             double vel;
 
             /* the speed of the disk particle */
-            vel=sqrt(G*pow(1.02201*pow(10,-9),2)*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
+            vel=sqrt(G*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
 
             /* set up the disk particle originally in the x-y plane */
             rb[0]=r[i]*cos(j*theta[i]);
@@ -182,7 +181,7 @@ double v2[];
             double vb[3];
             double vel;
 
-            vel=-sqrt(G*pow(1.02201*pow(10,-9.0),2.0)*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
+            vel=-sqrt(G*M*r[i]/(pow(r[i],2)+pow(esoft,2)));
 
             rb[0]=r[i]*cos(j*theta[i]);
             rb[1]=r[i]*sin(j*theta[i]);
@@ -260,7 +259,7 @@ double v2[];
     ra=a*(1+e);
 
     /* Period */
-    T=sqrt(4*PI*PI*pow(a,3)/(G*pow(1.02201*pow(10,-9.0),2.0)*2*M)); /* this is in calendar year */
+    T=sqrt(4*PI*PI*pow(a,3)/(G*2*M)); /* this is in calendar year */
 
     /* orbital speed */
     arealvel=PI*a*b/T;
@@ -270,18 +269,18 @@ double v2[];
     
     /* At apocenter the velocity has only tangential component along y-direction */
     v1[0]=0;
-    v1[1]=arealvel*2/ra; /* in kiloparsec/year */
+    v1[1]=arealvel/ra; /* in kiloparsec/year */
     v1[2]=0;
     for (int j=0;j<3;j++){
         v2[j]=-v1[j];
     }
-    r1[0]=ra-18;
+    r1[0]=ra/2.0f;
     r1[1]=0;
     r1[2]=0;
     for (int j=0;j<3;j++){
         r2[j]=-r1[j];
     }
-    printf("the start time for the core masses is %-14.4E.\n",tapo);
+    printf("the start time for the core masses is %-14.4E\n",tapo);
 }
 
 /* Give the initial position (x,y,z) of the two core masses at t=-16.4 of the last apocenter */

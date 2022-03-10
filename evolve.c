@@ -57,15 +57,10 @@ char *argv[];
     double dt;
     int particleN;
 
-<<<<<<< HEAD
-    mstep = 1000000;            
-    nout = 1000;                 
-=======
-    mstep = 900;            
-    nout = 1;                 
->>>>>>> Joy
+    mstep = 10000;            
+    nout = 10;                 
     scale = pow(10,8);
-    dt = 0.01*scale;  /* in calendar year */         
+    dt = 0.005*scale;  /* in calendar year */         
     particleN = 297*2;
     
 
@@ -156,22 +151,13 @@ void coreaccel()
     double dist=0;
 
     for (j=0;j<kND;j++){
-<<<<<<< HEAD
-        dist=dist+pow(r1[j]-r2[j],2);} /* in kiloparsec */
-=======
         dist+=pow(r1[j],2);}
->>>>>>> Joy
     dist=sqrt(dist);
     // double ac=-G*M/(dist*dist);
     for (j=0;j<kND;j++)
     {
-<<<<<<< HEAD
-        a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3.0);
-        a2[j]=-G*M*(r2[j]-r1[j])/pow(dist,3.0);
-=======
-       a1[j]=-G*M*(r1[j])/pow(dist,3);
-       a2[j]=-G*M*(r2[j])/pow(dist,3);
->>>>>>> Joy
+        a1[j]=-G*M*(r1[j])/pow(dist,3);
+        a2[j]=-G*M*(r2[j])/pow(dist,3);
     }
     
 }
@@ -182,6 +168,9 @@ void diskparticleaccel(n)
 int n;
 {
     int i,j;
+    double esoft;
+
+    esoft=0.01;
     /* Initialize acceleration arrays */
     for (i=0;i<n;i++){ 
         for (j=0;j<kND;j++){
@@ -197,13 +186,12 @@ int n;
         {
             ri1=ri1+pow(r1[j]-positions[i][j],2);
         }
-        ri1=sqrt(ri1);
+        ri1=sqrt(ri1+esoft*esoft);
         for (j=0;j<kND;j++)
         {
             ri2=ri2+pow(r2[j]-positions[i][j],2);
         }
-        ri2=sqrt(ri2);
-
+        ri2=sqrt(ri2+esoft*esoft);
         for (j=0;j<kND;j++)
         {
            accel[i][j]=accel[i][j]-G*M*(positions[i][j]-r1[j])/(pow(ri1,3))-G*M*(positions[i][j]-r2[j])/(pow(ri2,3));
