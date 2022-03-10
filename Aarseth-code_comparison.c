@@ -265,6 +265,7 @@ double refPos[kNumDims], temp[kNumDims];
         fprintf(outputFile, "%14.7g %14.7g %14.7g 1\n", positions[i][0],
             positions[i][1], positions[i][2]);
 
+/* + outputFile2 with the comparision = substraction with experimental results*/
 	    
     }
 
