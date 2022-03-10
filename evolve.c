@@ -58,7 +58,7 @@ char *argv[];
     double tend;
     int particleN;
 
-    mstep = 700;            
+    mstep = 900;            
     nout = 1;                 
     scale = pow(10,8);
     dt = 0.1*scale;            
