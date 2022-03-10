@@ -8,6 +8,7 @@ FILE *input1;
 FILE *input2;
 FILE *output;
 FILE *core;
+FILE *accell;
 
 
 #define MAXPNT 3000
@@ -16,6 +17,7 @@ FILE *core;
 /* define global arrays to store positions */
 double positions[MAXPNT][kND],velocities[MAXPNT][kND];
 double r1[kND],r2[kND],v1[kND],v2[kND];
+double arelativ[kND],r[kND];
 
 /* define global arrays to store accel */
 double accel[MAXPNT][kND];
@@ -45,24 +47,20 @@ int argc;
 char *argv[];
 {
     M=pow(10,11); /* in solar mass */
-    /* to keep G as 1, convert M into a new mass unit */
-    M=M*4.30091*pow(10,-6);
     /* to keep velocity and distance consistent, scale G */
-    G=G*pow(1.022*pow(10,-9),2);
+    G=G*4.30091*pow(10,-6)*pow(1.022*pow(10,-9),2);
 
     int n, mstep, nout, nstep;
-    double eta, tmax, episqr;
-    double dt;
     double scale;
     double tnow;
     double tend;
+    double dt;
     int particleN;
 
-    mstep = 700;            
-    nout = 1;                 
+    mstep = 1000000;            
+    nout = 1000;                 
     scale = pow(10,8);
-    dt = 0.1*scale;            
-    tmax = dt*40;
+    dt = 0.01*scale;  /* in calendar year */         
     particleN = 297*2;
     
 
@@ -70,6 +68,7 @@ char *argv[];
     input2 = fopen("initcore.dat", "r");
     output = fopen("evolution.dat", "w+");
     core = fopen("coremass.dat","w+");
+    accell = fopen("accel.dat","w+");
 
     readInit(particleN);
     readCore();
@@ -96,6 +95,8 @@ char *argv[];
     fclose(input1);
     fclose(input2);
     fclose(output);
+    fclose(core);
+    fclose(accell);
     printf("The end time is %14.4E\n",tend);
 
     return 0;
@@ -104,7 +105,7 @@ char *argv[];
 void readCore()
 {
     int j;
-/* the following reads in the core masses */
+    /* the following reads in the core masses */
     fscanf(input2,"%lf",&tinit);
     for (j=0;j<kND;j++)
     {
@@ -122,7 +123,6 @@ void readCore()
     {
         fscanf(input2,"%lf",&v2[j]);
     }
-    printf("The core positions are: %-14.4E\n",r1[0]);
 }
 
 
@@ -151,12 +151,13 @@ void coreaccel()
     double dist=0;
 
     for (j=0;j<kND;j++){
-        dist+=pow(r1[j]-r2[j],2);}
+        dist=dist+pow(r1[j]-r2[j],2);} /* in kiloparsec */
     dist=sqrt(dist);
+    // double ac=-G*M/(dist*dist);
     for (j=0;j<kND;j++)
     {
-       a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3);
-       a2[j]=-G*M*(r2[j]-r1[j])/pow(dist,3);
+        a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3.0);
+        a2[j]=-G*M*(r2[j]-r1[j])/pow(dist,3.0);
     }
     
 }
@@ -297,5 +298,8 @@ void checkcore()
     double radius1, radius2;
     radius1=sqrt(pow(r1[0],2)+pow(r1[1],2)+pow(r1[2],2));
     radius2=sqrt(pow(r2[0],2)+pow(r2[1],2)+pow(r2[2],2));
-    fprintf(core,"%-14.4E%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r2[0],r2[1]);
+    printf("%-14.4E%-14.4E\n",radius1,radius2);
+    fprintf(accell,"%-14.4E%-14.4E\n",a1[0],a1[1]);
+    fprintf(core,"%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E%-14.4E\n",r1[0],r1[1],r2[0],r2[1],v1[0],v2[0],v1[1],v2[1]);
 }
+

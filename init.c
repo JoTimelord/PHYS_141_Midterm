@@ -27,7 +27,7 @@ char *argv[];
 {
     M=pow(10,11); /* in solar mass */
     /* to keep G as 1, convert M into a new mass unit */
-    M=M*4.30091*pow(10,-6);
+    G=4.301*pow(10,-6)*pow(1.022*pow(10,-9),2);
     
     /* set up initial positions */
     int particleN;
@@ -270,8 +270,7 @@ double v2[];
     
     /* At apocenter the velocity has only tangential component along y-direction */
     v1[0]=0;
-    v1[1]=arealvel*2/ra; /* in parsec/year */
-    v1[1]=sqrt(G*pow(1.02201*pow(10,-9.0),2.0)*M*((2.0f/rp)-(1.0f/a)));
+    v1[1]=arealvel*2*pow(10,-3.0)/ra; /* in parsec/year */
     v1[2]=0;
     for (int j=0;j<3;j++){
         v2[j]=-v1[j];
