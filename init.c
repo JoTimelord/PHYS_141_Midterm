@@ -285,7 +285,6 @@ double v2[];
 }
 
 /* Give the initial position (x,y,z) of the two core masses at t=-16.4 of the last apocenter */
-/* warning: this needs debugging */
 void corepos(r1,r2,Rinit,rp,e,v1,v2)
 double r1[];
 double r2[];
