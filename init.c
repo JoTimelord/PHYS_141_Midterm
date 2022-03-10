@@ -111,7 +111,7 @@ double v2[];
     int ringn=11;
     int innern=12;
     int outern=42;
-    double esoft=0;
+    double esoft=0.2;
     
     int count=0;
    
@@ -270,7 +270,7 @@ double v2[];
     
     /* At apocenter the velocity has only tangential component along y-direction */
     v1[0]=0;
-    v1[1]=arealvel*2/ra; /* in kiloparsec/year */
+    v1[1]=arealvel*2/(ra+0.2); /* in kiloparsec/year */
     v1[2]=0;
     for (int j=0;j<3;j++){
         v2[j]=-v1[j];
