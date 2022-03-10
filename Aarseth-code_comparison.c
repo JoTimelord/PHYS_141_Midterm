@@ -48,12 +48,13 @@ int main()
 {
     /* the input file can either be a file or the standard input */
     /*inputFile = stdin;*/
-    inputFile = fopen("initc.data", "r");
+    inputFile = fopen("coremass.dat", "r");
 
     readParameters();
     readParticles();
-    outputFile = fopen("sphere.data", "w");
-    phyFile = fopen("spheredata.data", "w");
+    outputFile = fopen("output.dat", "w");
+    outputFile2 = fopen("output_c.dat", "w");	
+    phyFile = fopen("output_comp.dat", "w");
     initializeParticles();
 
     while(1)
@@ -264,6 +265,7 @@ double refPos[kNumDims], temp[kNumDims];
         fprintf(outputFile, "%14.7g %14.7g %14.7g 1\n", positions[i][0],
             positions[i][1], positions[i][2]);
 
+	    
     }
 
     /* potential energy */
