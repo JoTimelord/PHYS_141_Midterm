@@ -151,12 +151,12 @@ void coreaccel()
     double dist=0;
 
     for (j=0;j<kND;j++){
-        dist+=pow(r1[j]-r2[j],2);}
+        dist+=pow(r1[j],2);}
     dist=sqrt(dist);
     for (j=0;j<kND;j++)
     {
-       a1[j]=-G*M*(r1[j]-r2[j])/pow(dist,3);
-       a2[j]=-G*M*(r2[j]-r1[j])/pow(dist,3);
+       a1[j]=-G*M*(r1[j])/pow(dist,3);
+       a2[j]=-G*M*(r2[j])/pow(dist,3);
     }
     
 }
