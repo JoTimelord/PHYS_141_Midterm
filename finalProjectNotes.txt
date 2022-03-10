@@ -2,3 +2,4 @@ Instead of an elliptical orbit, the trajectory will follow a parabolic orbit, I 
 Initial conditions are described in the collision orbit note. There will be different conditions but should follow a similar code;
 Wa and Wb are not identical antymore; ia and ib are also different;
 It mentions something about a halo bulge which will also be somerthing that will need to be clarified;
+Barnes paper goes over the mice modeling in 3.1
