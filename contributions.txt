@@ -5,4 +5,4 @@ Debugging: Yuntong Zhou & Hatim Tapory
 
 Animation generation: Yuntong Zhou
 python scripts: Josue Zuniga
-Aaserth code modification: Hatim Tapory
+
