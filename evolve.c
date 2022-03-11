@@ -60,7 +60,7 @@ char *argv[];
     mstep = 10000;            
     nout = 10;                 
     scale = pow(10,8);
-    dt = 0.005*scale;  /* in calendar year */         
+    dt = 0.002*scale;  /* in calendar year */         
     particleN = 297*2;
     
 
@@ -157,7 +157,7 @@ void coreaccel()
     for (j=0;j<kND;j++)
     {
         a1[j]=-G*M*(r1[j])/pow(dist,3);
-        a2[j]=-G*M*(r2[j])/pow(dist,3);
+        a2[j]=-a1[j];
     }
     
 }
@@ -170,7 +170,7 @@ int n;
     int i,j;
     double esoft;
 
-    esoft=0.01;
+    esoft=0.00;
     /* Initialize acceleration arrays */
     for (i=0;i<n;i++){ 
         for (j=0;j<kND;j++){
